@@ -57,14 +57,43 @@ header a {
   color: #555;
 }
 .workout-details span {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   cursor: pointer;
   background: #f1f1f1;
   padding: 6px;
   border-radius: 50%;
   color: #333;
+}
+.workout-details strong {
+  margin-right: 5px;
+}
+.button {
+  position: absolute;
+  top: 20px;
+}
+.delete {
+  right: 20px;
+}
+.update {
+  right: 60px;
+}
+#check {
+  color: white;
+  background-color: #1aac83;
+}
+.workout-details input {
+  width: 300px;
+  height: 15px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-radius: 4px;
+  display: inline-block
+}
+#title-input {
+  height: 30px;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #1aac83;
+  font-weight: bold;
 }
 
 /* new workout form */
