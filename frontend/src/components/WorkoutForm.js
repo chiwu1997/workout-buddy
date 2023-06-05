@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useDropdownContext } from '../hooks/useDropdownContext'
 
 const WorkoutForm = () => {
   const { dispatch } = useWorkoutsContext()
   const { user } = useAuthContext()
+  const { dispatch: dropdownDispatch } = useDropdownContext()
 
   const [title, setTitle] = useState('')
   const [load, setLoad] = useState('')
@@ -42,7 +44,19 @@ const WorkoutForm = () => {
       setReps('')
       setError(null)
       setEmptyFields([])
-      dispatch({type: 'CREATE_WORKOUT', payload: json})
+      
+      dispatch({type: 'CREATE_WORKOUT', payload: json.workout})
+      if (json.titleSearch.length === 0) {
+        dropdownDispatch({
+          type: 'CREATE_DROPDOWN',
+          payload: {
+            _id: json.workout._id,
+            title: json.workout.title,
+            user_id: json.workout.user_id,
+            __v: json.workout.__v
+          }
+        })
+      }
     }
   }
 

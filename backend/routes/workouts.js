@@ -3,6 +3,7 @@ const {
   createWorkout,
   getWorkouts,
   getWorkout,
+  getWorkoutsByTitle,
   deleteWorkout,
   updateWorkout
 } = require('../controllers/workoutController')
@@ -18,6 +19,9 @@ router.get('/', getWorkouts)
 
 //GET a single workout
 router.get('/:id', getWorkout)
+
+//GET workouts by title
+router.get('/title/:title', getWorkoutsByTitle)
 
 // POST a new workout
 router.post('/', createWorkout)
