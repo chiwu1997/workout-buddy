@@ -1,6 +1,9 @@
 /* google font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 
+/* dropdown */
+@import "rsuite/dist/rsuite-no-reset.min.css";
+
 /* layout */
 :root {
   --primary: #1aac83;
@@ -128,6 +131,29 @@ div.error {
 }
 input.error {
   border: 1px solid var(--error);
+}
+
+/* dropdown */
+.dropdown-remove-button {
+  margin-left: 10px;
+  background: var(--primary);
+  border: 0;
+  color: white;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-size: 80%;
+  height: 100%;
+}
+
+.dropdown {
+  position:relative;
 }
 
 /* navbar */

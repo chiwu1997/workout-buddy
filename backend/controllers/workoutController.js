@@ -1,4 +1,5 @@
 const Workout = require('../models/workoutModel')
+const Dropdown = require('../models/dropdownModel')
 const mongoose = require('mongoose')
 
 // get all workouts
@@ -22,6 +23,19 @@ const getWorkout = async (req, res) => {
 
   if (!workout) {
     return res.status(404).json({error: 'No such workout'})
+  }
+  
+  res.status(200).json(workout)
+}
+
+// get workouts by title
+const getWorkoutsByTitle = async (req, res) => {
+  const { title } = req.params
+
+  const workout = await Workout.find({title}).sort({createdAt: -1})
+
+  if (!workout) {
+    return res.status(404).json({error: 'No such workout named as this title'})
   }
   
   res.status(200).json(workout)
@@ -51,7 +65,13 @@ const createWorkout = async (req, res) => {
   try {
     const user_id = req.user._id
     const workout = await Workout.create({title, load, reps, user_id})
-    res.status(200).json(workout)
+    
+    const titleSearch = await Dropdown.find({title: title})
+    if (titleSearch.length === 0) {
+      Dropdown.create({title, user_id})
+    }
+    
+    res.status(200).json({workout, titleSearch})
   } catch (error) {
     res.status(400).json({error: error.message})
   }
@@ -71,16 +91,27 @@ const deleteWorkout = async (req, res) => {
     return res.status(400).json({error: 'No such workout'})
   }
 
-  res.status(200).json(workout)
+  const titleSearch = await Workout.find({title: workout.title})
+  if (titleSearch.length === 0) {
+    const deletedDropdown = await Dropdown.findOneAndDelete({title: workout.title})
+    if (!deletedDropdown) {
+      console.log('No such title in dropdown')
+    }
+  }
+
+  res.status(200).json({workout, titleSearch})
 }
 
 // update a workout
 const updateWorkout = async (req, res) => {
   const { id } = req.params
+  const user_id = req.user._id
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: 'No such workout'})
   }
+
+  const originalWorkout = await Workout.findOne({_id: id})
 
   const workout = await Workout.findOneAndUpdate({_id: id}, {
     ...req.body
@@ -92,13 +123,27 @@ const updateWorkout = async (req, res) => {
     return res.status(400).json({error: 'No such workout'})
   }
 
-  res.status(200).json(workout)
+  const originalTitleSearch = await Workout.find({title: originalWorkout.title})
+  if (originalTitleSearch.length === 0) {
+    const deletedDropdown = await Dropdown.findOneAndDelete({title: originalWorkout.title})
+    if (!deletedDropdown) {
+      console.log('No such title in dropdown')
+    }
+  }
+
+  const updatedTitleSearch = await Dropdown.find({title: workout.title})
+  if (updatedTitleSearch.length === 0) {
+    Dropdown.create({title: workout.title, user_id})
+  }
+
+  res.status(200).json({workout, originalTitleSearch, originalTitle: originalWorkout, updatedTitleSearch})
 }
 
 
 module.exports = {
   getWorkouts,
   getWorkout,
+  getWorkoutsByTitle,
   createWorkout,
   deleteWorkout,
   updateWorkout
